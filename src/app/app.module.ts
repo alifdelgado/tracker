@@ -7,6 +7,18 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { LoginPage } from './../pages/login/login';
+import { UsuarioProvider } from '../providers/usuario/usuario';
+
+import { AngularFireModule } from 'angularfire2';
+import { AngularFirestoreModule } from 'angularfire2/firestore';
+import { firebaseConfig } from './../config/firebase.config';
+
+import { IonicStorageModule } from '@ionic/storage';
+import { UbicacionProvider } from '../providers/ubicacion/ubicacion';
+
+import { Geolocation } from '@ionic-native/geolocation';
+
+import { AgmCoreModule } from '@agm/core';
 
 @NgModule({
   declarations: [
@@ -16,7 +28,13 @@ import { LoginPage } from './../pages/login/login';
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    AngularFireModule.initializeApp(firebaseConfig),
+    AngularFirestoreModule,
+    IonicStorageModule.forRoot(),
+    AgmCoreModule.forRoot({
+      apiKey: ''
+    })
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -27,7 +45,10 @@ import { LoginPage } from './../pages/login/login';
   providers: [
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    UsuarioProvider,
+    UbicacionProvider,
+    Geolocation
   ]
 })
 export class AppModule {}

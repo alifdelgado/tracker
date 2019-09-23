@@ -1,3 +1,5 @@
+import { HomePage } from './../home/home';
+import { UsuarioProvider } from './../../providers/usuario/usuario';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController, LoadingController } from 'ionic-angular';
 
@@ -13,7 +15,7 @@ export class LoginPage {
 
   @ViewChild(Slides) slides: Slides;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private alertCtrl: AlertController, private loadingCtrl: LoadingController) { }
+  constructor(public navCtrl: NavController, public navParams: NavParams, private alertCtrl: AlertController, private loadingCtrl: LoadingController, private usuarioProvider: UsuarioProvider) { }
 
   ionViewDidLoad() {
     this.slides.paginationType = 'progress';
@@ -38,7 +40,6 @@ export class LoginPage {
         {
           text: 'Login',
           handler: data => {
-            console.log(data);
             this.verificarUsuario(data.username);
           }
         }
@@ -47,7 +48,7 @@ export class LoginPage {
   }
 
   ingresar() {
-
+    this.navCtrl.setRoot(HomePage);
   }
 
   verificarUsuario(clave: string) {
@@ -56,9 +57,21 @@ export class LoginPage {
     });
 
     loading.present();
-
-    setTimeout(() => {
+    this.usuarioProvider.verificaUsuario(clave).then(existe => {
       loading.dismiss();
-    }, 3000);
+      if(existe) {
+        this.slides.lockSwipes(false);
+        this.slides.freeMode = true;
+        this.slides.slideNext();
+        this.slides.lockSwipes(true);
+        this.slides.freeMode = false;
+      }else {
+        this.alertCtrl.create({
+          title: 'Usuario incorrecto',
+          subTitle: 'Hable con el administrador o pruebe de nuevo',
+          buttons: ['Aceptar']
+        }).present();
+      }
+    });
   }
 }
